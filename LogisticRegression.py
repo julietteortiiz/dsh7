@@ -26,7 +26,7 @@ def costJ(y: IntArray, y_pred: FloatArray) -> float:
         pi = y_pred[i]
         clip = 1e-15
         p_clipped = np.clip(pi, clip, 1-clip)
-        cost += -((yi * math.log(p_clipped)) + ((1-yi) * math.log(p_clipped)))
+        cost += -((yi * math.log(p_clipped)) + ((1-yi) * math.log(1-p_clipped)))
     return cost
 
 def fit_SGD(X: FloatArray, y: IntArray, alpha: float, eps: float = 1e-4,
@@ -91,8 +91,8 @@ def accuracy(X: FloatArray, coef: FloatArray, y: IntArray) -> float:
     correct = 0
     y_p = prediction(X, coef)
     y_pred = threshold(y_p)
-    for i in range(y):
-        if y[i] == null:
+    for i in range(len(y)):
+        if y[i] == None:
             raise ValueError("empty y")
         if y[i] == y_pred[i]:
             correct += 1

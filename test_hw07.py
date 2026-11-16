@@ -22,6 +22,7 @@ class PublicTests(unittest.TestCase):
             self.assertTrue(np.isfinite(p) and 0 <= p <= 1)
 
     def test_loss(self):
+        print(-2*np.log(.75))
         self.assertAlmostEqual(lr.costJ(np.array([0,1]),np.array([.25,.75])), -2*np.log(.75))
 
     def test_loss_clipping(self):

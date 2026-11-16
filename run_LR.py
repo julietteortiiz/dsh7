@@ -44,8 +44,7 @@ def confusion_matrix(y: IntArray, predicted: IntArray) -> IntArray:
             else:
                 TN += 1
     m = np.array([[TN, FP], [FN, TP]])
-    print(m)
-    print_confusion_matrix(m)
+    return m
 
 
 def parse_args() -> argparse.Namespace:
