@@ -88,6 +88,8 @@ def threshold(y_pred: FloatArray) -> IntArray:
 
 def accuracy(X: FloatArray, coef: FloatArray, y: IntArray) -> float:
     """Return fraction correct in [0,1]. Raise ValueError for an empty y."""
+    if not y.any():
+        raise ValueError("empty y")
     correct = 0
     y_p = prediction(X, coef)
     y_pred = threshold(y_p)
