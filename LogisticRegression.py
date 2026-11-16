@@ -46,9 +46,10 @@ def fit_SGD(X: FloatArray, y: IntArray, alpha: float, eps: float = 1e-4,
     n = x_with_bias.shape[0] #rows, xi
     w = np.zeros(m)
     costs = [0]
+    rng = np.random.default_rng(seed)
     for i in range(tmax):
-
-        for j in range(n):
+        indices = rng.permutation(len(x_with_bias))
+        for j in indices:
             xi = x_with_bias[j]
             yi = y[j]
             derivative = (logistic(xi, w) - yi) * xi
