@@ -38,7 +38,7 @@ def fit_SGD(X: FloatArray, y: IntArray, alpha: float, eps: float = 1e-4,
     Always perform the first epoch. eps=0 disables early stopping. Do not mutate inputs.
     Raise ValueError for alpha<=0, eps<0, tmax<1 or empty training data.
     """
-    if (alpha <= 0 or eps < 0 or tmax < 1):
+    if (alpha <= 0 or eps < 0 or tmax < 1 or not X.any()):
         raise ValueError("either alpha, eps, or tmax out of range")
 
     x_with_bias = add_ones(X)
