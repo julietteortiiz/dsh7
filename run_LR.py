@@ -5,6 +5,11 @@ from pathlib import Path
 import numpy as np
 from LogisticRegression import FloatArray, IntArray
 import LogisticRegression as lr
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+from scipy.special import expit
+import matplotlib.pyplot as plt
 
 
 def parse_csv(filename: str | Path) -> tuple[FloatArray, IntArray]:
@@ -83,12 +88,15 @@ def main() -> None:
     print("Confusion matrix (rows=true, columns=predicted):")
     print(confusion_matrix(test_y, labels))
     if args.compare:
-        # TODO: train and evaluate sklearn's LogisticRegression on both datasets.
-        # Report accuracy, confusion matrix, and positive-class probabilities.
-        raise NotImplementedError("Add the sklearn comparison")
+        clf = LogisticRegression(l1_ratio=0, C = 0.01, max_iter=100)
+        clf.fit(X, y)
+        y_pred = clf.predict(test_X)
+        print(f"Accuracy: {np.mean(y_pred == test_y):.6f}")
+        print("Confusion matrix (rows=true, columns=predicted):")
+        print(metrics.confusion_matrix(test_y, y_pred))    
+              
     if args.plot:
         plot_challenger(X, y, test_X, test_y, coef, args.plot)
-
 
 def plot_challenger(X: FloatArray, y: IntArray, test_X: FloatArray,
                     test_y: IntArray, coef: FloatArray, output: Path) -> None:
@@ -98,8 +106,32 @@ def plot_challenger(X: FloatArray, y: IntArray, test_X: FloatArray,
     temperature (degrees F) on the horizontal axis, title, legend and distinct markers.
     Save the figure to output and close it; do not call show().
     """
-    # TODO: implement the contract above.
-    raise NotImplementedError("Implement plot_challenger")
+    clf = LogisticRegression(l1_ratio=0, C = 0.01, max_iter=100)
+    clf.fit(X, y)
+    y_pred = clf.predict(test_X)
+    plt.figure(1, figsize=(12, 6))
+    plt.clf()
+    plt.scatter(X.ravel(), y, label="train", color="black", zorder=20)
+    plt.scatter(test_X.ravel(), test_y, label="test", color="blue", zorder=20)
+    grid = np.linspace(30, 85, 200).reshape(-1, 1)
+    loss = expit(grid * clf.coef_ + clf.intercept_).ravel()
+    plt.plot(grid, loss, label="Sklearn LR Model", color="red", linewidth=3)
+    ys = expit(coef[1] * grid + coef[0]).ravel()
+    plt.plot(grid, ys, label="My LR Model", color="blue", linewidth=3)
+    plt.axhline(0.5, color=".5")
+    plt.ylabel("p(1)")
+    plt.xlabel("temperature F")
+    plt.xticks(range(30, 85))
+    plt.yticks([0, 0.5, 1])
+    plt.ylim(-0.25, 1.25)
+    plt.xlim(30, 85)
+    plt.legend(
+        loc="lower right",
+        fontsize="small",
+    )
+    plt.title("Logistic Regression Model for Challenger")
+    plt.savefig(output, dpi=300, bbox_inches="tight")
+    plt.close()
 
 
 if __name__ == "__main__":
